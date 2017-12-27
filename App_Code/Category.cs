@@ -16,7 +16,7 @@ public class Category
 		//
 	}
 
-
+    private int id;
 
     private string name;
 
@@ -26,10 +26,6 @@ public class Category
         set { name = value; }
     }
 
-    
-
-    private int id;
-
     public int Id
     {
         get { return id; }
@@ -38,20 +34,8 @@ public class Category
     public Category(string _name)
     {
         name = _name;
-
     }
 
-
-    //--------------------------------------------
-    //first method:datareader + CCEC
-    //--------------------------------------------
-    //public int insert()
-    //{
-    //    DBservices dbs = new DBservices();
-    //    int numAffected = dbs.insert(this);
-    //    return numAffected;
-    //}
-    ////---------------------------------------------------
 
     //----------------------------------------------------
     //second method:dataAdapter
@@ -64,22 +48,17 @@ public class Category
         HttpContext.Current.Session["categoryDataSet"] = dbs;
         return dbs.dt;
     }
-    //---------------------------------------------------
+
 
     //------------------------------------------------------------------------
     // update the dataset with a new car record
     //------------------------------------------------------------------------
     public void updateTable()
     {
-
         if (HttpContext.Current.Session["categoryDataSet"] == null) return;
-
         DBservices dbs = (DBservices)HttpContext.Current.Session["categoryDataSet"];
-
         DataRow dr = dbs.dt.NewRow();
         dr["Category_name"] = name;
-       
-
         dbs.dt.Rows.Add(dr);
 
     }
@@ -88,12 +67,8 @@ public class Category
     //---------------------------------------------------------------------------------
     public void updateDatabase()
     {
-
         if (HttpContext.Current.Session["categoryDataSet"] == null) return;
-
         DBservices dbs = (DBservices)HttpContext.Current.Session["categoryDataSet"];
-
         dbs.Update();
-
     }
 }

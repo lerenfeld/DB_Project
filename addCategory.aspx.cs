@@ -35,10 +35,9 @@ public partial class _Default : System.Web.UI.Page
         ShowTable(dt);*/
 
         DBservices db = new DBservices();
-        DataTable dt = db.table_constractor("ProductsDBConnectionString", "category", "Category_id", "Category_name");
-
+        db = db.searchItemsInDataBase("ProductsDBConnectionString", "select Category_id,Category_name from category");
         GridView grdv = new GridView(); // create a new datagrid
-        grdv.DataSource = dt;           // make a link of to the table
+        grdv.DataSource = db.dt;           // make a link of to the table
 
         // the following lines will set some gridview properties, just to show that we can change them programatically
         grdv.ForeColor = Color.Gray;
