@@ -33,7 +33,7 @@ public partial class addProduct : System.Web.UI.Page
         DBservices dbs = new DBservices();
         try
         {
-            dbs = dbs.ReadFromDataBase("ProductsDBConnectionString", "category", "Category_name");
+            dbs = dbs.searchItemsInDataBase("ProductsDBConnectionString", "select Category_name from category");
         }
         catch (Exception ex)
         {
@@ -63,14 +63,14 @@ public partial class addProduct : System.Web.UI.Page
             string SavedFileName = Server.MapPath(".") + "/assets/images/" + name;
             string ProductFilePath = "assets/images/" + name;
             FileUpload.SaveAs(SavedFileName);
-            char productStatus;
+            bool productStatus;
             if (statusCB.Checked == true)
             {
-                productStatus = '1';
+                productStatus = true;
             }
             else
             {
-                productStatus = '0';
+                productStatus = false;
             }
             product = new Product(productName, productPrice, CategoryName, productInventory, ProductFilePath, productStatus);
         }

@@ -16,20 +16,25 @@ public class Product
 		// TODO: Add constructor logic here
 		//
 	}
-
+    int id;
     string categoryName;
     string productName;
     string imagePath;
     double price;
     int inventory;
-    char status;
+    bool status;
 
+    public int Id
+    {
+        get { return id; }
+        set { id = value; }
+    }
     public string ProductName
     {
         get { return productName; }
         set { productName = value; }
     }
-    public char Status
+    public bool Status
     {
         get { return status; }
         set { status = value; }
@@ -60,7 +65,7 @@ public class Product
     }
 
 
-    public Product(string _productName, double _price, string _categoryName, int _inventory, string _imagePath, char _status)
+    public Product(string _productName, double _price, string _categoryName, int _inventory, string _imagePath, bool _status)
     {
         ProductName = _productName;
         Price = _price;
@@ -68,6 +73,16 @@ public class Product
         Inventory = _inventory;
         ImagePath = _imagePath;
         Status=_status;
+    }
+    public Product(string _productName, double _price, string _categoryName, int _inventory, string _imagePath, bool _status, int _id)
+    {
+        ProductName = _productName;
+        Price = _price;
+        CategoryName = _categoryName;
+        Inventory = _inventory;
+        ImagePath = _imagePath;
+        Status = _status;
+        Id = _id;
     }
     public int insertProduct()
     {

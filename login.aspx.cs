@@ -48,6 +48,8 @@ public partial class login : System.Web.UI.Page
                 {
                     Response.Cookies["UserName"].Value = UserName.Text;
                     Response.Cookies["Password"].Value = UserPassword.Text;
+                    Response.Cookies["UserName"].Expires= DateTime.Now.AddYears(1);
+                    Response.Cookies["Password"].Expires = DateTime.Now.AddYears(1);
                 }
                 Response.Redirect("inventoryManagement.aspx");
                 break;
@@ -64,6 +66,8 @@ public partial class login : System.Web.UI.Page
                 {
                     Response.Cookies["UserName"].Value = UserName.Text;
                     Response.Cookies["Password"].Value = UserPassword.Text;
+                    Response.Cookies["UserName"].Expires = DateTime.Now.AddYears(1);
+                    Response.Cookies["Password"].Expires = DateTime.Now.AddYears(1);
                 }
                 Response.Redirect("showProducts.aspx");
                 break;
