@@ -21,6 +21,6 @@
     <asp:Label ID="WelcomeLBL" runat="server" Text=""></asp:Label>
     <asp:PlaceHolder ID="ph" runat="server"></asp:PlaceHolder>
     <br />
-    <asp:Button ID="submitBTN" runat="server" Text="Submit" OnClick="submitBTN_Click" />
+    <asp:Button ID="submitBTN" runat="server" Text="Submit and add to cart" OnClick="submitBTN_Click" />
 </asp:Content>
 

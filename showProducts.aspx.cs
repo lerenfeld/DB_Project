@@ -62,8 +62,7 @@ public partial class showProducts : System.Web.UI.Page
         ProductList = pullProductList();
         foreach (var product in ProductList)
         {
-            //if (product.Status == true)
-            //{
+
                 //create controllers
                 Image ProductImage = new Image();
                 Label ProductId = new Label();
@@ -126,7 +125,7 @@ public partial class showProducts : System.Web.UI.Page
                 ph.Controls.Add(ProductInventory);
                 ph.Controls.Add(ProductCategoryId);
                 ph.Controls.Add(new LiteralControl("</div> </div>"));
-            //}
+
         }
     }
 
@@ -165,15 +164,19 @@ public partial class showProducts : System.Web.UI.Page
 
     protected void submitBTN_Click(object sender, EventArgs e)
     {
-       // Product ProductItem = new Product();
         List<Product> ProductList = new List<Product>();
         ProductList = pullProductList();
         List<Product> CheckedProductsList = new List<Product>();
         foreach (var product in ProductList)
         {
+
             CheckBox cb = (CheckBox)ph.FindControl("ProductCheckBox" + Convert.ToString(product.Id));
             if (cb.Checked == true)
             {
+                if (product.Id == 1)
+                {
+                    product.Price = product.Price * (1 - discount);
+                }
                 CheckedProductsList.Add(product);
             }
         }
