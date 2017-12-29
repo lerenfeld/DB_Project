@@ -23,7 +23,7 @@ public partial class cart : System.Web.UI.Page
             if (Session["logedInUser"] != null)
             {//signed user
                 User logedInUser = (User)Session["logedInUser"];
-                if (logedInUser.Type != "user")//administrator user
+                if (logedInUser.Type == "administrator")//administrator user
                     Response.Redirect("inventoryManagement.aspx");
             }
         }
@@ -238,6 +238,7 @@ public partial class cart : System.Web.UI.Page
 
     protected void CartSubmitButton_Click(object sender, EventArgs e)
     {
+        totalPrice = calculateTotal();
         if (fromAmount == true)
         {
             return;

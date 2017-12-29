@@ -10,6 +10,7 @@ public partial class showProducts : System.Web.UI.Page
 {
     double discount = 0;
 
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
@@ -27,12 +28,14 @@ public partial class showProducts : System.Web.UI.Page
                     {
                         discount = 0.2;
                         Response.Cookies["BeenHere"].Value = "2";
+                        WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are an old customer:)</h2><br/>";
                     }
                     else//new customer
                     {
                         discount = 0.5;
                         Response.Cookies["BeenHere"].Value = "1";
                         Response.Cookies["BeenHere"].Expires = DateTime.Now.AddYears(1);
+                        WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are a new customer:)</h2><br/>";
                     }
                 }
                 else//administrator user
@@ -90,14 +93,14 @@ public partial class showProducts : System.Web.UI.Page
                 if (product.Id == 1)
                 {
                     ProductPrice.Text = "<span class='title special'>Special Price: </span><span class='content special'>" + Convert.ToString(product.Price * (1 - discount)) + "</span> <br /> <span class='content special'>" + discount * 100 + "% OFF! </span> <br />";
-                    if (discount == 0.5)
-                    {
-                        WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are a new customer:)</h2><br/>";
-                    }
-                    else
-                    {
-                        WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are an old customer:)</h2><br/>";
-                    }
+                    //if (discount == 0.5)
+                    //{
+                    //    WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are a new customer:)</h2><br/>";
+                    //}
+                    //else
+                    //{
+                    //    WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are an old customer:)</h2><br/>";
+                    //}
                 }
                 else
                 {
