@@ -10,7 +10,7 @@ using System.Web.UI.WebControls;
 public partial class cart : System.Web.UI.Page
 {
     double totalPrice = 0;
-
+    bool fromAmount = false;
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -70,8 +70,8 @@ public partial class cart : System.Web.UI.Page
                     ProductPrice.ID = "ProductPrice" + Convert.ToString(product.Id);
                     amountTB.Text = "1";
                     amountTB.Columns = 1;
-                    amountTB.TextChanged += amountTB_TextChanged;
                     amountTB.ID = "CartProductAmount" + Convert.ToString(product.Id);
+                    amountTB.TextChanged += amountTB_TextChanged;
                     amountAlertLBL.ID = "ProductAmountError" + Convert.ToString(product.Id);
                     regex.ControlToValidate = amountTB.ID;
                     regex.ValidationExpression = "^[0-9]*$";
@@ -83,7 +83,7 @@ public partial class cart : System.Web.UI.Page
                     cartPh.Controls.Add(ProductImage);
                     cartPh.Controls.Add(new LiteralControl("<br />"));
                     cartPh.Controls.Add(ProductTitle);
-                    cartPh.Controls.Add(new LiteralControl("Price:"));
+                    cartPh.Controls.Add(new LiteralControl("Price per product:"));
                     cartPh.Controls.Add(ProductPrice);
                     cartPh.Controls.Add(new LiteralControl("<br />"));
                     cartPh.Controls.Add(ProductCheckBox);
@@ -161,7 +161,7 @@ public partial class cart : System.Web.UI.Page
             int productInventory = (int)dr["productN_inventory"];
             Label AlertLBL = (Label)cartPh.FindControl("ProductAmountError" + Convert.ToString(productId));
 
-            if (Convert.ToInt32(TB.Text) > productInventory)                                      //not enaught products in inventory
+            if (Convert.ToInt32(TB.Text) > productInventory || Convert.ToInt32(TB.Text)<1)                                      //not enaught products in inventory
             {
                 AlertLBL.Text = "<h6 class='alert'>Inventory is " + productInventory + "<h6>";
                 TB.Text = "1";
@@ -194,6 +194,7 @@ public partial class cart : System.Web.UI.Page
         Session["ProductsInDiscount"] = ProductsInDiscount;
         Label totalPriceLable = (Label)cartPh.FindControl("totalPriceLBL");
         totalPriceLable.Text = Convert.ToString("Total Price:" + calculateTotal());
+        fromAmount = true;
     }
 
 
@@ -213,6 +214,7 @@ public partial class cart : System.Web.UI.Page
 
     void CheckedChangedFunc(object sender, EventArgs e)//update the list everytime uncheck product
     {
+       
         CheckBox cb = sender as CheckBox;
         if (!cb.Checked)
         {
@@ -236,6 +238,10 @@ public partial class cart : System.Web.UI.Page
 
     protected void CartSubmitButton_Click(object sender, EventArgs e)
     {
+        if (fromAmount == true)
+        {
+            return;
+        }
         Dictionary<Product, int> CartProducts = new Dictionary<Product, int>();
         List<Product> checkedProductsList = (List<Product>)Session["checkedProductsList"];
         foreach (var product in checkedProductsList)
