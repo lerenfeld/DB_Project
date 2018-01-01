@@ -11,4 +11,15 @@ public partial class UserMasterPage : System.Web.UI.MasterPage
     {
 
     }
+
+    protected void deleteSession(object sender, EventArgs e)
+    {
+        if (Session["logedInUser"] != null)
+        {
+            Session["logedInUser"] = null;
+        }
+        Response.Redirect("login.aspx");
+
+    }
+
 }

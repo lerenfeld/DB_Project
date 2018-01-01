@@ -1,9 +1,9 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UserMasterPage.master" AutoEventWireup="true" CodeFile="payment.aspx.cs" Inherits="payment" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-       
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 
-       <style>
+
+    <style>
         #Payment a {
             color: white;
             background-color: black;
@@ -22,8 +22,12 @@
             background-color: black;
         }
 
-         #payment a {
-            color: white;
+            #payment a {
+                color: white;
+            }
+
+        h2 {
+            color: red;
         }
     </style>
     <script>
@@ -65,11 +69,10 @@
 
 </asp:Content>
 
-
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-
-     <h1 class="Headers">טופס תשלומים</h1>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div class='PaymentForm'>
+        <h1 class="Headers">טופס תשלומים</h1>
+        <asp:Label ID="priceSuccsesMassege" runat="server" Text="" Visible="false"></asp:Label>
         <asp:Label ID="TotalPriceLBL" runat="server" Text="Label"></asp:Label>
         <table>
             <tr>
@@ -118,7 +121,7 @@
                 <td>Shippment Date</td>
                 <td>
                     <asp:Calendar ID="ShipDate_CLD" runat="server" OnSelectionChanged="checkCalender"></asp:Calendar>
-                 </td>
+                </td>
                 <td>
                     <asp:Label ID="ShipDateValidator" runat="server" Style="color: #FF0000"></asp:Label>
                 </td>
@@ -134,8 +137,6 @@
                     <asp:CustomValidator ID="CustomPaymentValidator" runat="server" Display="Dynamic" ClientValidationFunction="checkRadioButtons"
                         ErrorMessage="please choose payment option" Style="color: #FF0000">
                     </asp:CustomValidator>
-
-
                 </td>
             </tr>
         </table>
@@ -247,7 +248,7 @@
                     <asp:FileUpload ID="FileUpload" runat="server" />
                 </td>
                 <td>
-<%--                    <asp:RequiredFieldValidator ID="RequiredFileUploadValidator" ControlToValidate="FileUpload" runat="server" ErrorMessage="Must upload signature!" Style="color: #FF0000"></asp:RequiredFieldValidator>--%>
+                    <%--                    <asp:RequiredFieldValidator ID="RequiredFileUploadValidator" ControlToValidate="FileUpload" runat="server" ErrorMessage="Must upload signature!" Style="color: #FF0000"></asp:RequiredFieldValidator>--%>
                 </td>
             </tr>
             <tr>
@@ -258,8 +259,6 @@
             </tr>
         </table>
         <asp:Button ID="SubmitButton" runat="server" Text="Submit" OnClick="Payment_Submit_Click" />
-
-
     </div>
 </asp:Content>
 

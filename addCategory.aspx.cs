@@ -29,10 +29,7 @@ public partial class _Default : System.Web.UI.Page
     //-------------------------------------------------------------------------
     protected void ButtonReadDB_Click(object sender, EventArgs e)
     {
-       /* Category cat = new Category();
-        DataTable dt = cat.readCategorysDB(); // read from the DataBase
 
-        ShowTable(dt);*/
 
         DBservices db = new DBservices();
         db = db.searchItemsInDataBase("ProductsDBConnectionString", "select Category_id,Category_name from category");

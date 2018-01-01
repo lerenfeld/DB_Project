@@ -313,4 +313,64 @@ public class DBservices
         return command;
 
     }
+
+
+
+
+    //--------------------------------------------------------------------
+    // Execute the UPDATE Command ( inventory after sale )
+    //--------------------------------------------------------------------
+
+    public int updateInventory(int newInvetoryValue, int productID)  //INSERT to Sales table 
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+        try
+        {
+            con = connect("ProductsDBConnectionString"); // create the connection and open it
+        }
+        catch (Exception ex)
+        {
+            throw (ex);                               // write to log
+        }
+        String cStr = BuildUpdateInventoryCommand(newInvetoryValue, productID);    // helper method to build the insert string
+        cmd = CreateCommand(cStr, con);               // create the command with all settings(query+ time to wait)
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery();  // execute the command and bring back the number of effected rows
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            return 0;
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();                         // close the db connection MUST!
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+    // Build the UPDATE command  ( inventory after sale )
+    //--------------------------------------------------------------------
+    private String BuildUpdateInventoryCommand(int newInvetoryValue, int productID)
+    {
+        String command;
+
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+
+        sb.AppendFormat(" SET productN_inventory=('{0}') WHERE productN_id=('{1}')", newInvetoryValue.ToString(), productID.ToString());
+        String prefix = "UPDATE productN";
+        command = prefix + sb.ToString();
+        return command;
+
+    }
+
+
 }

@@ -10,10 +10,7 @@ using System.Web.UI.WebControls;
 
 public partial class payment : System.Web.UI.Page
 {
-
     int i = 0;
-
-
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -88,57 +85,49 @@ public partial class payment : System.Web.UI.Page
 
     protected void Payment_Submit_Click(object sender, EventArgs e)
     {
-        //checkCalender(sender, e);
-        //string signature = FileUpload.FileName;
-        //string SavedFileName = Server.MapPath(".") + "/assets/UploadedFiles/uploadNo" + i + signature;
-        //FileUpload.SaveAs(SavedFileName);
+        checkCalender(sender, e);
+        string signature = FileUpload.FileName;
+        string SavedFileName = Server.MapPath(".") + "/assets/UploadedFiles/uploadNo" + i + signature;
+        FileUpload.SaveAs(SavedFileName);
 
-        //signatureImage.ImageUrl = "assets/UploadedFiles/uploadNo" + i + signature;
-        //signatureImage.ToolTip = "your signature";
-        //signatureLable.Text = "<br/>form uploaded succesfully";
-        //i++;
-
-
-
-    //    Dictionary<Product, int> SalesProductsDic = new Dictionary<Product, int>()  // stub
-    //{
-    //    {new Product {Id=1, ProductName="Karnik",ImagePath="photo1",Price=200,Inventory=5 ,Status=true,CategoryName="chair"}, 2 },
-    //    {new Product {Id=2, ProductName="sarnik",ImagePath="photo2",Price=300,Inventory=6 ,Status=true,CategoryName="table"}, 1 }
-    //};
-
-    //    Session["checkedProductsList"] = SalesProductsDic; 
-
+        signatureImage.ImageUrl = "assets/UploadedFiles/uploadNo" + i + signature;
+        signatureImage.ToolTip = "your signature";
+        signatureLable.Text = "<br/>form uploaded succesfully";
+        i++;
 
 
         if (Session["CartProducts"] != null)  // this session came from cart  !!
         {
-
+            int SuccessfulSignUpInSalesTable = 0;
+            int SuccessfulInventoryUpdate = 0;
+            int countSales = 0;
             Dictionary<Product, int> SalesProducts = (Dictionary<Product, int>)Session["CartProducts"]; // this session came from cart  !!
 
-            foreach(KeyValuePair<Product, int> kvp in SalesProducts)  
+            foreach (KeyValuePair<Product, int> kvp in SalesProducts)
             {
-            Sale sale = new Sale(); 
-            sale.Product =  kvp.Key;
-            sale.ProductTotalPrice = (float)kvp.Key.Price * kvp.Value;
-            sale.Amount =kvp.Value;
-            User logedInUser = (User)Session["logedInUser"];//get the  user name
-            sale.UserName = logedInUser.Name;
-            sale.Date = DateTime.Now;//get the  date
-            sale.Payment = (string)Session["howPayment"];
+                countSales++;
+                DBservices dbs = new DBservices();
+                Sale sale = new Sale();
+                sale.Product = kvp.Key;
+                sale.ProductTotalPrice = (float)kvp.Key.Price * kvp.Value;
+                sale.Amount = kvp.Value;
+                User logedInUser = (User)Session["logedInUser"];//get the  user name
+                sale.UserName = logedInUser.Name;
+                sale.Date = DateTime.Now;//get the  date
+                sale.Payment = (string)Session["howPayment"];
+                SuccessfulSignUpInSalesTable += dbs.insertSale(sale);  //insert row to sale table
 
-            DBservices dbs = new DBservices();
-            int SaleResult = 0;
-            SaleResult = dbs.insertSale(sale);
-
-
+                int newInvetoryValue = kvp.Key.Inventory - kvp.Value;
+                SuccessfulInventoryUpdate += dbs.updateInventory(newInvetoryValue, kvp.Key.Id);//update inventory
             }
-           
+
+            if (countSales == SuccessfulSignUpInSalesTable && countSales == SuccessfulInventoryUpdate)
+            //option 1 //check if we finish to save and update our data . and give massage to user
+            //option 2   if (SalesProducts.Keys.Last() == kvp.Key) 
+            {
+                priceSuccsesMassege.Controls.Add(new LiteralControl("<h2>Sale successfully saved</h2>"));
+                priceSuccsesMassege.Visible = true;
+            }
         }
-
-
-
     }
-
-
-
 }

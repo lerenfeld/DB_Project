@@ -5,10 +5,10 @@
 
 <html>
 <head id="Head1" runat="server">
-    <title></title>    
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-    <link href="assets/css/MasterPageStyle.css" rel="stylesheet" />
+    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="assets/css/MasterPageStyle.css" rel="stylesheet" />
 
 
     <asp:ContentPlaceHolder ID="head" runat="server">
@@ -32,10 +32,11 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav">
-                    <li id="inventoryManagement"><a  href="inventoryManagement.aspx">ניהול מלאי</a></li>
-                    <li id="showSales"><a  href="showSales.aspx">הצגת מכירות</a></li>
-                    <li id="addProduct"><a  href="addProduct.aspx">הוספת מוצר </a></li>
-                    <li id="addCategory"><a  href="addCategory.aspx">הוספת קטגוריה</a></li>
+                    <li id="inventoryManagement"><a href="inventoryManagement.aspx">ניהול מלאי</a></li>
+                    <li id="showSales"><a href="showSales.aspx">הצגת מכירות</a></li>
+                    <li id="addProduct"><a href="addProduct.aspx">הוספת מוצר </a></li>
+                    <li id="addCategory"><a href="addCategory.aspx">הוספת קטגוריה</a></li>
+                    <li id="login" class="signOut"><a runat="server" onserverclick="deleteSession">התנתקות</a></li>
                 </ul>
             </div>
         </div>
