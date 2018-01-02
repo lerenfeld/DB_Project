@@ -75,6 +75,7 @@ public partial class cart : System.Web.UI.Page
                     amountTB.Text = "1";
                     amountTB.Columns = 1;
                     amountTB.ID = "CartProductAmount" + Convert.ToString(product.Id);
+                    amountTB.AutoPostBack = true;
                     amountTB.TextChanged += amountTB_TextChanged;
                     amountAlertLBL.ID = "ProductAmountError" + Convert.ToString(product.Id);
                     regex.ControlToValidate = amountTB.ID;

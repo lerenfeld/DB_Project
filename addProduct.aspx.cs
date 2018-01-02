@@ -211,7 +211,6 @@ public partial class addProduct : System.Web.UI.Page
         RequiredFileUploadValidator.Enabled = true;
         Session["oldProduct"] = null;
         Labeloldprod.Text = "";
-
     }
 }
 
