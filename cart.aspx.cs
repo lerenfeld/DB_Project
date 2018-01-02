@@ -25,8 +25,12 @@ public partial class cart : System.Web.UI.Page
                 User logedInUser = (User)Session["logedInUser"];
                 if (logedInUser.Type == "administrator")//administrator user
                     Response.Redirect("inventoryManagement.aspx");
+                else {
+                    Session["ProductsInDiscount"] = null;
+                }
             }
         }
+
         initialPage();
     }
 
@@ -107,6 +111,8 @@ public partial class cart : System.Web.UI.Page
             }
         }
         else cartPh.Controls.Add(new LiteralControl("<h2>You didn't chose product yet!</h2>"));
+
+
     }
 
 
@@ -181,8 +187,8 @@ public partial class cart : System.Web.UI.Page
                 else if (ProductsInDiscount.ContainsKey(productId) == false)
                 {
                     double newPrice = Convert.ToInt32(ProductPricetLBL.Text) * 0.9;
-                    ProductPricetLBL.Text = Convert.ToString(newPrice);
                     int originalPrice = Convert.ToInt32(ProductPricetLBL.Text);
+                    ProductPricetLBL.Text = Convert.ToString(newPrice);
                     ProductsInDiscount.Add(productId, originalPrice);
                 }
             }

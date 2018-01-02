@@ -93,14 +93,6 @@ public partial class showProducts : System.Web.UI.Page
                 if (product.Id == 1)
                 {
                     ProductPrice.Text = "<span class='title special'>Special Price: </span><span class='content special'>" + Convert.ToString(product.Price * (1 - discount)) + "</span> <br /> <span class='content special'>" + discount * 100 + "% OFF! </span> <br />";
-                    //if (discount == 0.5)
-                    //{
-                    //    WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are a new customer:)</h2><br/>";
-                    //}
-                    //else
-                    //{
-                    //    WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are an old customer:)</h2><br/>";
-                    //}
                 }
                 else
                 {

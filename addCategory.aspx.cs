@@ -37,11 +37,11 @@ public partial class _Default : System.Web.UI.Page
         grdv.DataSource = db.dt;           // make a link of to the table
 
         // the following lines will set some gridview properties, just to show that we can change them programatically
-        grdv.ForeColor = Color.Gray;
+        grdv.ForeColor = Color.Black;
         grdv.BackColor = Color.White;
-        grdv.ControlStyle.BorderStyle = BorderStyle.Double;
+        grdv.ControlStyle.BorderStyle = BorderStyle.None;
         grdv.ControlStyle.BorderWidth = 10;
-      
+        grdv.CssClass = "grdvCss";
 
         grdv.DataBind();               // bind the control view to the data
 

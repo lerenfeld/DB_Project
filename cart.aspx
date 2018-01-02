@@ -25,6 +25,7 @@
         }
         input#ContentPlaceHolder1_CartSubmitButton {
         width:100%;
+        margin-bottom:30px;
         }
     </style>
 

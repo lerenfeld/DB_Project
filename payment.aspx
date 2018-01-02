@@ -248,7 +248,7 @@
                     <asp:FileUpload ID="FileUpload" runat="server" />
                 </td>
                 <td>
-                    <%--                    <asp:RequiredFieldValidator ID="RequiredFileUploadValidator" ControlToValidate="FileUpload" runat="server" ErrorMessage="Must upload signature!" Style="color: #FF0000"></asp:RequiredFieldValidator>--%>
+                                        <asp:RequiredFieldValidator ID="RequiredFileUploadValidator" ControlToValidate="FileUpload" runat="server" ErrorMessage="Must upload signature!" Style="color: #FF0000"></asp:RequiredFieldValidator>
                 </td>
             </tr>
             <tr>
