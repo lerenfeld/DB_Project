@@ -19,7 +19,7 @@ public partial class _Default : System.Web.UI.Page
             if (Session["logedInUser"] != null)
             {
                 User logedInUser = (User)Session["logedInUser"];
-                if (logedInUser.Type != "administrator")
+                if (logedInUser.Type == "user")
                     Response.Redirect("showProducts.aspx");
             }
         
@@ -29,10 +29,7 @@ public partial class _Default : System.Web.UI.Page
     //-------------------------------------------------------------------------
     protected void ButtonReadDB_Click(object sender, EventArgs e)
     {
-       /* Category cat = new Category();
-        DataTable dt = cat.readCategorysDB(); // read from the DataBase
 
-        ShowTable(dt);*/
 
         DBservices db = new DBservices();
         db = db.searchItemsInDataBase("ProductsDBConnectionString", "select Category_id,Category_name from category");
@@ -40,11 +37,11 @@ public partial class _Default : System.Web.UI.Page
         grdv.DataSource = db.dt;           // make a link of to the table
 
         // the following lines will set some gridview properties, just to show that we can change them programatically
-        grdv.ForeColor = Color.Gray;
+        grdv.ForeColor = Color.Black;
         grdv.BackColor = Color.White;
-        grdv.ControlStyle.BorderStyle = BorderStyle.Double;
+        grdv.ControlStyle.BorderStyle = BorderStyle.None;
         grdv.ControlStyle.BorderWidth = 10;
-      
+        grdv.CssClass = "grdvCss";
 
         grdv.DataBind();               // bind the control view to the data
 

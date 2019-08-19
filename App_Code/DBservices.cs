@@ -237,6 +237,7 @@ public class DBservices
         }
 
     }
+
     private String BuildInsertCommand(Category cat)
     {
         String command;
@@ -248,42 +249,7 @@ public class DBservices
         return command;
     }
 
-    //public DataTable table_constractor(string conString, string tableName, string FieldName_1, string FieldName_2)
-    //{
-    //    SqlConnection con = null;
-    //    try
-    //    {
-    //        con = connect(conString); // create a connection to the database using the connection String defined in the web config file
 
-    //        String selectSTR = "SELECT * FROM " + tableName;
-    //        SqlCommand cmd = new SqlCommand(selectSTR, con);
-
-    //        // get a reader
-    //        SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection); // CommandBehavior.CloseConnection: the connection will be closed after reading has reached the end
-
-    //        DataTable dt = new DataTable();
-    //        dt.Columns.Add(FieldName_1);
-    //        dt.Columns.Add(FieldName_2);
-
-    //        while (dr.Read())
-    //        {   // Read till the end of the data into a row
-    //            AddRow(dt, Convert.ToString(dr[FieldName_1]), (string)dr[FieldName_2]);
-    //        }
-    //        return dt;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        // write to log
-    //        throw (ex);
-    //    }
-    //    finally
-    //    {
-    //        if (con != null)
-    //        {
-    //            con.Close();
-    //        }
-    //    }
-    //}
     //----------------------------------------------------------------------------
     // This method is adding data to a table by passing the parameters
     //----------------------------------------------------------------------------
@@ -296,4 +262,115 @@ public class DBservices
         }
         dt.Rows.Add(dr);          // add the row to the table
     }
+
+    public int insertSale(Sale sale)  //INSERT to Sales table 
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+        try
+        {
+            con = connect("ProductsDBConnectionString"); // create the connection and open it
+        }
+        catch (Exception ex)
+        {
+            throw (ex);                               // write to log
+        }
+        String cStr = BuildInsertCommandSales(sale);    // helper method to build the insert string
+        cmd = CreateCommand(cStr, con);               // create the command with all settings(query+ time to wait)
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery();  // execute the command and bring back the number of effected rows
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            return 0;
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();                         // close the db connection MUST!
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+    // Build the Insert a Sale command String
+    //--------------------------------------------------------------------
+    private String BuildInsertCommandSales(Sale sale)
+    {
+        String command;
+
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+
+        sb.AppendFormat(" Values ('{0}','{1}','{2}', '{3}','{4}','{5}')", sale.Product.Id.ToString(), sale.ProductTotalPrice.ToString(), sale.Amount.ToString(), sale.UserName.ToString(), sale.Date.ToString("yyyy-MM-dd"), sale.Payment.ToString());
+        String prefix = "INSERT INTO Sale (Sale_productId  , Sale_productTotalPrice , Sale_amount, Sale_userName, Sale_date, Sale_payment )";
+        command = prefix + sb.ToString();
+        return command;
+
+    }
+
+
+
+
+    //--------------------------------------------------------------------
+    // Execute the UPDATE Command ( inventory after sale )
+    //--------------------------------------------------------------------
+
+    public int updateInventory(int newInvetoryValue, int productID)  //INSERT to Sales table 
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+        try
+        {
+            con = connect("ProductsDBConnectionString"); // create the connection and open it
+        }
+        catch (Exception ex)
+        {
+            throw (ex);                               // write to log
+        }
+        String cStr = BuildUpdateInventoryCommand(newInvetoryValue, productID);    // helper method to build the insert string
+        cmd = CreateCommand(cStr, con);               // create the command with all settings(query+ time to wait)
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery();  // execute the command and bring back the number of effected rows
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            return 0;
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();                         // close the db connection MUST!
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+    // Build the UPDATE command  ( inventory after sale )
+    //--------------------------------------------------------------------
+    private String BuildUpdateInventoryCommand(int newInvetoryValue, int productID)
+    {
+        String command;
+
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+
+        sb.AppendFormat(" SET productN_inventory=('{0}') WHERE productN_id=('{1}')", newInvetoryValue.ToString(), productID.ToString());
+        String prefix = "UPDATE productN";
+        command = prefix + sb.ToString();
+        return command;
+
+    }
+
+
 }

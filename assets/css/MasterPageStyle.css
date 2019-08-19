@@ -48,7 +48,7 @@
 
         .footer {
             bottom: 0;
-            padding:15px;
+            padding:5px;
             background-color: rgba(16, 16, 16, 0.59);
             width: 100%;
             text-align: center;
@@ -103,4 +103,8 @@
 
         #form1 {
         padding-bottom:50px;
+        }
+                .signOut{
+            position:absolute  !important;
+            right:0;
         }

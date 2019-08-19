@@ -91,4 +91,41 @@ public class Product
         return numAffected;
 
     }
+    //----------------------------------------
+    //adapter-bonus
+    //-----------------------------------------
+    public void updateTable()
+    {
+
+        if (HttpContext.Current.Session["productsDataSet"] == null) return;
+
+        DBservices dbs = (DBservices)HttpContext.Current.Session["productsDataSet"];
+
+        foreach (DataRow dr in dbs.dt.Rows)
+        {
+            if (Convert.ToInt32(dr["productN_id"]) == id)
+            {
+                dr["productN_name"] = productName;
+                dr["productN_imagePath"] = imagePath;
+                dr["productN_price"] = price;
+                dr["productN_inventory"] = inventory;
+                dr["productN_status"] = status;
+                dr["productN_category"] = categoryName;
+            }
+        }
+
+    }
+    //---------------------------------------------------------------------------------
+    // update the database-bonus
+    //---------------------------------------------------------------------------------
+    public void updateDatabase()
+    {
+
+        if (HttpContext.Current.Session["productsDataSet"] == null) return;
+
+        DBservices dbs = (DBservices)HttpContext.Current.Session["productsDataSet"];
+
+        dbs.Update();
+
+    }
 }

@@ -18,7 +18,7 @@ public partial class inventoryManagement : System.Web.UI.Page
             if (Session["logedInUser"] != null)
             {
                 User logedInUser = (User)Session["logedInUser"];
-                if (logedInUser.Type != "administrator")
+                if (logedInUser.Type == "user")
                     Response.Redirect("showProducts.aspx");
             }
         }

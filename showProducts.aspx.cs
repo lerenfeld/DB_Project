@@ -10,6 +10,7 @@ public partial class showProducts : System.Web.UI.Page
 {
     double discount = 0;
 
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
@@ -27,12 +28,14 @@ public partial class showProducts : System.Web.UI.Page
                     {
                         discount = 0.2;
                         Response.Cookies["BeenHere"].Value = "2";
+                        WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are an old customer:)</h2><br/>";
                     }
                     else//new customer
                     {
                         discount = 0.5;
                         Response.Cookies["BeenHere"].Value = "1";
                         Response.Cookies["BeenHere"].Expires = DateTime.Now.AddYears(1);
+                        WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are a new customer:)</h2><br/>";
                     }
                 }
                 else//administrator user
@@ -62,8 +65,7 @@ public partial class showProducts : System.Web.UI.Page
         ProductList = pullProductList();
         foreach (var product in ProductList)
         {
-            //if (product.Status == true)
-            //{
+
                 //create controllers
                 Image ProductImage = new Image();
                 Label ProductId = new Label();
@@ -91,14 +93,6 @@ public partial class showProducts : System.Web.UI.Page
                 if (product.Id == 1)
                 {
                     ProductPrice.Text = "<span class='title special'>Special Price: </span><span class='content special'>" + Convert.ToString(product.Price * (1 - discount)) + "</span> <br /> <span class='content special'>" + discount * 100 + "% OFF! </span> <br />";
-                    if (discount == 0.5)
-                    {
-                        WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are a new customer:)</h2><br/>";
-                    }
-                    else
-                    {
-                        WelcomeLBL.Text = "<h2 style='color:red;'>Welcome! we see you are an old customer:)</h2><br/>";
-                    }
                 }
                 else
                 {
@@ -126,7 +120,7 @@ public partial class showProducts : System.Web.UI.Page
                 ph.Controls.Add(ProductInventory);
                 ph.Controls.Add(ProductCategoryId);
                 ph.Controls.Add(new LiteralControl("</div> </div>"));
-            //}
+
         }
     }
 
@@ -165,15 +159,19 @@ public partial class showProducts : System.Web.UI.Page
 
     protected void submitBTN_Click(object sender, EventArgs e)
     {
-       // Product ProductItem = new Product();
         List<Product> ProductList = new List<Product>();
         ProductList = pullProductList();
         List<Product> CheckedProductsList = new List<Product>();
         foreach (var product in ProductList)
         {
+
             CheckBox cb = (CheckBox)ph.FindControl("ProductCheckBox" + Convert.ToString(product.Id));
             if (cb.Checked == true)
             {
+                if (product.Id == 1)
+                {
+                    product.Price = product.Price * (1 - discount);
+                }
                 CheckedProductsList.Add(product);
             }
         }

@@ -9,20 +9,33 @@ using System.Web.UI.WebControls;
 
 public partial class cart : System.Web.UI.Page
 {
-    int originalPrice;
-    
-    
-    string lastLabelid = null;
     double totalPrice = 0;
+    bool fromAmount = false;
 
     protected void Page_Load(object sender, EventArgs e)
     {
+        if (!IsPostBack)
+        {
+            if (Session["logedInUser"] == null)
+            {//unsigned user
+                Response.Redirect("login.aspx");
+            }
+            if (Session["logedInUser"] != null)
+            {//signed user
+                User logedInUser = (User)Session["logedInUser"];
+                if (logedInUser.Type == "administrator")//administrator user
+                    Response.Redirect("inventoryManagement.aspx");
+                else {
+                    Session["ProductsInDiscount"] = null;
+                }
+            }
+        }
+
         initialPage();
-        //CartSubmitButton.UseSubmitBehavior = false;
     }
-   
-        
-    protected void initialPage() {
+
+    protected void initialPage()
+    {
         if (Session["checkedProductsList"] != null)
         {
             List<Product> checkedProductsList = (List<Product>)Session["checkedProductsList"];
@@ -31,6 +44,14 @@ public partial class cart : System.Web.UI.Page
                 cartPh.Controls.Add(new LiteralControl("<h2>No products chose</h2>"));
             }
             else
+            {
+                cartPh.Controls.Add(new LiteralControl("<div>"));
+                Label totalPriceLBL = new Label();
+                totalPriceLBL.ID = "totalPriceLBL";
+                cartPh.Controls.Add(totalPriceLBL);
+                totalPriceLBL.CssClass = "total";
+                cartPh.Controls.Add(new LiteralControl("</div>"));
+
                 foreach (var product in checkedProductsList)
                 {
                     //create controllers
@@ -41,7 +62,6 @@ public partial class cart : System.Web.UI.Page
                     TextBox amountTB = new TextBox();
                     Label amountAlertLBL = new Label();
                     RegularExpressionValidator regex = new RegularExpressionValidator();
-
                     //set controllers
                     ProductCheckBox.ID = "CartProductCheckBox" + Convert.ToString(product.Id);
                     ProductCheckBox.Checked = true;
@@ -54,14 +74,13 @@ public partial class cart : System.Web.UI.Page
                     ProductPrice.ID = "ProductPrice" + Convert.ToString(product.Id);
                     amountTB.Text = "1";
                     amountTB.Columns = 1;
-                    amountTB.TextChanged += amountTB_TextChanged;
                     amountTB.ID = "CartProductAmount" + Convert.ToString(product.Id);
-                    amountAlertLBL.ID="ProductAmountError" + Convert.ToString(product.Id);
+                    amountTB.AutoPostBack = true;
+                    amountTB.TextChanged += amountTB_TextChanged;
+                    amountAlertLBL.ID = "ProductAmountError" + Convert.ToString(product.Id);
                     regex.ControlToValidate = amountTB.ID;
                     regex.ValidationExpression = "^[0-9]*$";
                     regex.ErrorMessage = "numbers only!";
-                    
-
 
                     //insert all info to page
                     cartPh.Controls.Add(new LiteralControl("<div class='col-lg-3 col-md-6 col-xs-12'>"));
@@ -69,7 +88,7 @@ public partial class cart : System.Web.UI.Page
                     cartPh.Controls.Add(ProductImage);
                     cartPh.Controls.Add(new LiteralControl("<br />"));
                     cartPh.Controls.Add(ProductTitle);
-                    cartPh.Controls.Add(new LiteralControl("Price:"));
+                    cartPh.Controls.Add(new LiteralControl("Price per product:"));
                     cartPh.Controls.Add(ProductPrice);
                     cartPh.Controls.Add(new LiteralControl("<br />"));
                     cartPh.Controls.Add(ProductCheckBox);
@@ -81,40 +100,61 @@ public partial class cart : System.Web.UI.Page
                     cartPh.Controls.Add(new LiteralControl("</div> </div>"));
                     totalPrice += product.Price;
                 }
-            tatalCartPrice.Controls.Add(new LiteralControl("<h2>Total Price: " + totalPrice + "</h2>"));
+                totalPriceLBL.Text = Convert.ToString("Total Price:" + totalPrice);
+            }
             if (Request.Cookies["CartChanged"] != null)
             {
                 if (Request.Cookies["CartChanged"].Value == "1")
                 {
                     CartMessageArea.Text = "<h2>The changes have been saved</h2>";
                     Response.Cookies["CartChanged"].Value = "0";
-
                 }
             }
         }
         else cartPh.Controls.Add(new LiteralControl("<h2>You didn't chose product yet!</h2>"));
-    
-    
-    
-    
+
+
     }
 
-    void amountTB_TextChanged(object sender, EventArgs e)//check inventory, and update the message if more then 5 or more then inventory
+
+    //check inventory, update the inventory message and update total
+    void amountTB_TextChanged(object sender, EventArgs e)
     {
-        //if (lastLabelid != null && totalPrice!=0)
-        //{
-        //    Label OldAlertLBL = (Label)cartPh.FindControl("ProductAmountError" + Convert.ToString(lastLabelid));
-        //    OldAlertLBL.Text = "";
-        //    Label OldPrice=(Label)cartPh.FindControl("ProductPrice" + Convert.ToString(lastLabelid));
-        //    OldPrice.Text = Convert.ToString(originalPrice);
-        //}
+        Dictionary<int, int> ProductsInDiscount = new Dictionary<int, int>();
+        if (Session["ProductsInDiscount"] != null)                                       //bring back the original price if needed
+        {
+            Dictionary<int, int> OldProductsInDiscount = (Dictionary<int, int>)Session["ProductsInDiscount"];
+            ProductsInDiscount = OldProductsInDiscount;
+            foreach (var item in OldProductsInDiscount)
+            {
+                TextBox amount = (TextBox)cartPh.FindControl("CartProductAmount" + item.Key);
+                if (Convert.ToInt32(amount.Text) < 6)                                    //bring back the original price
+                {
+                    Label price = (Label)cartPh.FindControl("ProductPrice" + Convert.ToString(item.Key));
+                    Label alert = (Label)cartPh.FindControl("ProductAmountError" + Convert.ToString(item.Key));
+                    price.Text = Convert.ToString(item.Value);
+                    price.CssClass = "";
+                    alert.Text = "";
+                }
+            }
+        }
+
+        if (Session["lastErrorLableId"] != null)                                        //clear last error on next press
+        {
+            string lastErrorLableId = (string)Session["lastErrorLableId"];
+            Label OldAlertLBL = (Label)cartPh.FindControl(lastErrorLableId);
+            OldAlertLBL.Text = "";
+            Session["lastErrorLableId"] = null;
+        }
+
         DBservices dbs = new DBservices();
         TextBox TB = (TextBox)sender;
         string name = TB.ID;
         int productId = Convert.ToInt32(name.Replace("CartProductAmount", ""));
-        try
+
+        try                                                              //get the inventory of the product that customer pressed on.
         {
-            string selectquery="select productN_inventory from productN where productN_id="+productId;
+            string selectquery = "select productN_inventory from productN where productN_id=" + productId;
             dbs = dbs.searchItemsInDataBase("ProductsDBConnectionString", selectquery);
         }
         catch (Exception ex)
@@ -125,41 +165,63 @@ public partial class cart : System.Web.UI.Page
 
         foreach (DataRow dr in dbs.dt.Rows)
         {
-            
             int productInventory = (int)dr["productN_inventory"];
             Label AlertLBL = (Label)cartPh.FindControl("ProductAmountError" + Convert.ToString(productId));
 
-            if (Convert.ToInt32(TB.Text) > productInventory)
+            if (Convert.ToInt32(TB.Text) > productInventory || Convert.ToInt32(TB.Text)<1)                                      //not enaught products in inventory
             {
                 AlertLBL.Text = "<h6 class='alert'>Inventory is " + productInventory + "<h6>";
                 TB.Text = "1";
-                lastLabelid = "ProductAmountError" + Convert.ToString(productId);
-
+                string lastErrorLableId = "ProductAmountError" + Convert.ToString(productId);
+                Session["lastErrorLableId"] = lastErrorLableId;
             }
-            else if (Convert.ToInt32(TB.Text)>5)
+            else if (Convert.ToInt32(TB.Text) > 5)                                               //need to get a disscount
             {
                 AlertLBL.Text = "<h6 class='alert'>if you'll buy up to 5 products you'll get discount of 10% off<h6>";
                 Label ProductPricetLBL = (Label)cartPh.FindControl("ProductPrice" + Convert.ToString(productId));
-                originalPrice = Convert.ToInt32(ProductPricetLBL.Text);
-                double newPrice=Convert.ToInt32(ProductPricetLBL.Text) * 0.9;
-                ProductPricetLBL.Text =Convert.ToString(newPrice);
                 ProductPricetLBL.CssClass = "alert";
-                lastLabelid = "ProductAmountError" + Convert.ToString(productId);
-            }
-            else if (Convert.ToInt32(TB.Text) < 6) {
-                AlertLBL.Text = "";
 
-            
+                if (ProductsInDiscount.ContainsKey(productId) == true)
+                {
+                    ProductPricetLBL.Text = Convert.ToString(ProductsInDiscount[productId] * 0.9);
+                }
+                else if (ProductsInDiscount.ContainsKey(productId) == false)
+                {
+                    double newPrice = Convert.ToInt32(ProductPricetLBL.Text) * 0.9;
+                    int originalPrice = Convert.ToInt32(ProductPricetLBL.Text);
+                    ProductPricetLBL.Text = Convert.ToString(newPrice);
+                    ProductsInDiscount.Add(productId, originalPrice);
+                }
+            }
+            else if (Convert.ToInt32(TB.Text) < 6)
+            {
+                AlertLBL.Text = "";
             }
         }
-
-
+        Session["ProductsInDiscount"] = ProductsInDiscount;
+        Label totalPriceLable = (Label)cartPh.FindControl("totalPriceLBL");
+        totalPriceLable.Text = Convert.ToString("Total Price:" + calculateTotal());
+        fromAmount = true;
     }
 
 
-
-    void CheckedChangedFunc(object sender, EventArgs e)
+    double calculateTotal()
     {
+        double total = 0;
+        List<Product> checkedProductsList = (List<Product>)Session["checkedProductsList"];
+        foreach (var product in checkedProductsList)
+        {
+            Label ProductPricetLBL = (Label)cartPh.FindControl("ProductPrice" + Convert.ToString(product.Id));
+            TextBox amount = (TextBox)cartPh.FindControl("CartProductAmount" + Convert.ToString(product.Id));
+            total += Convert.ToDouble(ProductPricetLBL.Text) * Convert.ToDouble(amount.Text);
+        }
+        return total;
+    }
+
+
+    void CheckedChangedFunc(object sender, EventArgs e)//update the list everytime uncheck product
+    {
+       
         CheckBox cb = sender as CheckBox;
         if (!cb.Checked)
         {
@@ -175,16 +237,32 @@ public partial class cart : System.Web.UI.Page
                     Session["checkedProductsList"] = checkedProductsList;
                     Response.Cookies["CartChanged"].Value = "1";
                     Response.Redirect("Cart.aspx");
-
                 }
             }
         }
-
     }
+
+
     protected void CartSubmitButton_Click(object sender, EventArgs e)
     {
-        Session["TotalAmount"] = totalPrice;
-        Response.Redirect("Payment.aspx");
+        totalPrice = calculateTotal();
+        if (fromAmount == true)
+        {
+            return;
+        }
+        Dictionary<Product, int> CartProducts = new Dictionary<Product, int>();
+        List<Product> checkedProductsList = (List<Product>)Session["checkedProductsList"];
+        foreach (var product in checkedProductsList)
+        {
+            Product productObj = new Product();
+            Label ProductPricetLBL = (Label)cartPh.FindControl("ProductPrice" + Convert.ToString(product.Id));
+            TextBox amount = (TextBox)cartPh.FindControl("CartProductAmount" + Convert.ToString(product.Id));
+            product.Price = Convert.ToDouble(ProductPricetLBL.Text);
+            CartProducts.Add(product, Convert.ToInt32(amount.Text));
+        }
+        Session["CartProducts"] = CartProducts;
+        Session["totalPrice"] = totalPrice;
+        Response.Redirect("payment.aspx");
     }
 
 }
